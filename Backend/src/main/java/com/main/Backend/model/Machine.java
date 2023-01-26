@@ -15,9 +15,6 @@ public class Machine implements Runnable{
 
     private void processProduct() throws InterruptedException {
         Integer currProd;
-        while (source.isEmpty()){
-
-        }
 
         currProd = source.getProduct();
 

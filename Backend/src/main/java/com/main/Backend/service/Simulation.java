@@ -6,12 +6,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.Random;
 
-public class Simulation {
+public class Simulation implements Runnable{
     private ArrayList<WaitingLine> waitingLines = new ArrayList<WaitingLine>();
     private ArrayList<Machine> machines = new ArrayList<Machine>();
     private ArrayList<Thread> threads = new ArrayList<Thread>();
-
+    private boolean autoFeed = true;
 
     public void buildGraph(String[] queueIds, String[] machineIds){
         for (String queueId : queueIds) {
@@ -24,22 +25,15 @@ public class Simulation {
                     waitingLines.get(Integer.parseInt(machineVals[1])),
                     waitingLines.get(Integer.parseInt(machineVals[2]))), "Machine " + machineVals[0]));
         }
-        WaitingLine waitingLine = waitingLines.get(0);
-        waitingLine.addProduct(0);
-        waitingLine.addProduct(1);
-        waitingLine.addProduct(2);
-        waitingLine.addProduct(3);
-        waitingLine.addProduct(4);
-        waitingLine.addProduct(5);
-
     }
 
     public void startSim(){
         for(Thread thread: threads){
             thread.start();
         }
-
+        Thread simThread = new Thread(this, "sim thread");
     }
+
 
     public void stopSim(){
         for(Thread thread: threads){
@@ -47,5 +41,18 @@ public class Simulation {
         }
     }
 
+    public void feedProducts() throws InterruptedException {
+        WaitingLine waitingLine = waitingLines.get(0);
+        Random rand = new Random();
+        while(autoFeed){
+            waitingLine.addProduct(rand.nextInt());
+            Thread.sleep((long) Math.floor(Math.random() *(2000 - 100 + 1) + 100));
+        }
+    }
 
+
+    @Override
+    public void run() {
+
+    }
 }

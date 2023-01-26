@@ -14,7 +14,8 @@ public class simController {
 
 
     @PostMapping("/sim/start")
-    public ResponseEntity<?> startSim(@RequestParam("queues") String[] queuesIds, @RequestParam("machines") String[] machineIds){
+    public ResponseEntity<?> startSim(@RequestParam("queues") String[] queuesIds,
+                                      @RequestParam("machines") String[] machineIds){
         simulation.buildGraph(queuesIds, machineIds);
         simulation.startSim();
         return new ResponseEntity<>(HttpStatus.OK);

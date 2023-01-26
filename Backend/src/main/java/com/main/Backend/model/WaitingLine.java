@@ -9,7 +9,6 @@ public class WaitingLine {
     private Queue<Integer> products = (Queue<Integer>) new LinkedList<Integer>();
 
     public WaitingLine(String id) {
-        this.products = products;
         this.id = id;
     }
 
@@ -39,4 +38,7 @@ public class WaitingLine {
         }
     }
 
+    public Integer getSize(){
+        return products.size();
+    }
 }
