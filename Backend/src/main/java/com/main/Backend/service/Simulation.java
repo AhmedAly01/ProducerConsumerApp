@@ -2,29 +2,35 @@ package com.main.Backend.service;
 
 import com.main.Backend.model.Machine;
 import com.main.Backend.model.WaitingLine;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Queue;
 import java.util.Random;
 
 public class Simulation implements Runnable{
     private ArrayList<WaitingLine> waitingLines = new ArrayList<WaitingLine>();
     private ArrayList<Machine> machines = new ArrayList<Machine>();
     private ArrayList<Thread> threads = new ArrayList<Thread>();
-    private boolean autoFeed = true;
+    private boolean feedProducts = false;
 
-    public void buildGraph(String[] queueIds, String[] machineIds){
+    public void buildGraph(String[] queueIds, String[] machineIds, boolean feedProducts){
+        this.feedProducts = feedProducts;
         for (String queueId : queueIds) {
             waitingLines.add(new WaitingLine(queueId));
         }
 
         for(String machineId : machineIds){
             String[] machineVals = machineId.split(" ");
+            int min = 500;
+            int max = 3000;
             threads.add(new Thread(new Machine(machineVals[0],
                     waitingLines.get(Integer.parseInt(machineVals[1])),
-                    waitingLines.get(Integer.parseInt(machineVals[2]))), "Machine " + machineVals[0]));
+                    waitingLines.get(Integer.parseInt(machineVals[2])), (long) Math.floor(Math.random() *(max - min + 1) + min)), "Machine " + machineVals[0]));
         }
+    }
+
+
+    public void setFeedProducts(boolean feedProducts){
+        this.feedProducts = feedProducts;
     }
 
     public void startSim(){
@@ -32,6 +38,7 @@ public class Simulation implements Runnable{
             thread.start();
         }
         Thread simThread = new Thread(this, "sim thread");
+        simThread.start();
     }
 
 
@@ -39,20 +46,27 @@ public class Simulation implements Runnable{
         for(Thread thread: threads){
             thread.interrupt();
         }
+        threads.clear();
     }
 
     public void feedProducts() throws InterruptedException {
         WaitingLine waitingLine = waitingLines.get(0);
         Random rand = new Random();
-        while(autoFeed){
-            waitingLine.addProduct(rand.nextInt());
-            Thread.sleep((long) Math.floor(Math.random() *(2000 - 100 + 1) + 100));
+        int min = 500;
+        int max = 2000;
+        while(feedProducts){
+            waitingLine.addProduct(rand.nextInt(1000));
+            Thread.sleep((long) Math.floor(Math.random() *(max - min + 1) + min));
         }
     }
 
 
     @Override
     public void run() {
-
+        try {
+            feedProducts();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

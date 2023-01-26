@@ -15,8 +15,9 @@ public class simController {
 
     @PostMapping("/sim/start")
     public ResponseEntity<?> startSim(@RequestParam("queues") String[] queuesIds,
-                                      @RequestParam("machines") String[] machineIds){
-        simulation.buildGraph(queuesIds, machineIds);
+                                      @RequestParam("machines") String[] machineIds,
+                                      @RequestParam("feedProducts") boolean feedProducts){
+        simulation.buildGraph(queuesIds, machineIds, feedProducts);
         simulation.startSim();
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -25,6 +26,12 @@ public class simController {
     @PostMapping("/sim/stop")
     public ResponseEntity<?> stopSim(){
         simulation.stopSim();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/sim/feed")
+    public ResponseEntity<?> changeFeed(@RequestParam("feed") boolean feedProducts){
+        simulation.setFeedProducts(feedProducts);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

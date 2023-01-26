@@ -6,11 +6,13 @@ public class Machine implements Runnable{
     private WaitingLine target;
 
     private Integer currProduct = null;
+    private Long processingTime;
 
-    public Machine(String id, WaitingLine source, WaitingLine target){
+    public Machine(String id, WaitingLine source, WaitingLine target, Long processingTime){
         this.source = source;
         this.target = target;
         this.id = id;
+        this.processingTime = processingTime;
     }
 
     private void processProduct() throws InterruptedException {
@@ -18,12 +20,10 @@ public class Machine implements Runnable{
 
         currProd = source.getProduct();
 
-        Thread.sleep(5000);
+        Thread.sleep(processingTime);
         System.out.println(id + " processed " + currProd);
 
         target.addProduct(currProd);
-
-
     }
 
     @Override
