@@ -18,8 +18,13 @@ export class CanvasComponent implements OnInit {
   connection: Konva.Shape = new Konva.Shape();
   queueArray: Array<string> = [];
   machineArray: Array<string> = [];
+  products: Array<number> = [];
   isConnect: boolean = false;
   source: any;
+  sim: string = "Start Simulation";
+  input: string = "Start Input";
+  isSimOn: boolean = false;
+  isInputOn: boolean = false;
 
   constructor() { }
 
@@ -92,6 +97,32 @@ export class CanvasComponent implements OnInit {
       this.layer.add(this.connection);
       console.log(this.machineArray);
     });
+  }
+
+  controlSim() {
+    if (!this.isSimOn){
+      this.sim = "Stop Simulation";
+      this.isSimOn = true;
+    }
+    else {
+      this.sim = "Start Simulation";
+      this.isSimOn = false;
+    }
+  }
+
+  controlInput() {
+    if (!this.isInputOn){
+      this.input = "Stop Input";
+      this.isInputOn = true;
+    }
+    else {
+      this.input = "Start Input";
+      this.isInputOn = false;
+    }
+  }
+
+  play() {
+    
   }
 
 }
