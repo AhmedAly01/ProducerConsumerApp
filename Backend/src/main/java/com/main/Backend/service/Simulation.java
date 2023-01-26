@@ -11,6 +11,7 @@ public class Simulation implements Runnable{
     private ArrayList<Machine> machines = new ArrayList<Machine>();
     private ArrayList<Thread> threads = new ArrayList<Thread>();
     private boolean feedProducts = false;
+    private Thread simThread = new Thread(this, "sim thread");
 
     public void buildGraph(String[] queueIds, String[] machineIds, boolean feedProducts){
         this.feedProducts = feedProducts;
@@ -31,13 +32,15 @@ public class Simulation implements Runnable{
 
     public void setFeedProducts(boolean feedProducts){
         this.feedProducts = feedProducts;
+        if(feedProducts && !simThread.isAlive()){
+            simThread.start();
+        }
     }
 
     public void startSim(){
         for(Thread thread: threads){
             thread.start();
         }
-        Thread simThread = new Thread(this, "sim thread");
         simThread.start();
     }
 

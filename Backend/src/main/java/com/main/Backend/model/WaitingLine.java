@@ -20,12 +20,12 @@ public class WaitingLine {
     }
 
     public Integer getProduct() throws InterruptedException {
-        System.out.println(Thread.currentThread());
+//        System.out.println(Thread.currentThread());
         synchronized (products) {
             while (products.isEmpty()){
                 products.wait();
             }
-            System.out.println(Thread.currentThread() + "got product");
+//            System.out.println(Thread.currentThread() + "got product");
                 return products.remove();
         }
     }
@@ -33,7 +33,7 @@ public class WaitingLine {
     public void addProduct(Integer product){
         synchronized (products){
             this.products.add(product);
-            System.out.println(Thread.currentThread() + "added product");
+//            System.out.println(Thread.currentThread() + "added product");
             products.notify();
         }
     }
