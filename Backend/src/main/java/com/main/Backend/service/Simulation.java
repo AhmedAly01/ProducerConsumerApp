@@ -30,18 +30,24 @@ public class Simulation implements Runnable{
     }
 
 
-    public void setFeedProducts(boolean feedProducts){
+    public void setFeedProducts(boolean feedProducts) throws InterruptedException {
         this.feedProducts = feedProducts;
-        if(feedProducts && !simThread.isAlive()){
-            simThread.start();
+        if (feedProducts) {
+            simThread.resume();
+        } else {
+            simThread.suspend();
         }
+        System.out.println(simThread.getState());
     }
 
     public void startSim(){
         for(Thread thread: threads){
             thread.start();
         }
-        simThread.start();
+        if(simThread.getState().equals(Thread.State.NEW))
+            simThread.start();
+        else
+            simThread.resume();
     }
 
 
@@ -49,7 +55,39 @@ public class Simulation implements Runnable{
         for(Thread thread: threads){
             thread.interrupt();
         }
+        for(WaitingLine waitingLine: waitingLines){
+            System.out.println(waitingLine.getSize());
+        }
+
         threads.clear();
+        machines.clear();
+        waitingLines.clear();
+
+        simThread.suspend();
+    }
+
+
+    public void pauseSim(){
+        for(Thread thread: threads){
+            thread.suspend();
+        }
+        for(WaitingLine waitingLine: waitingLines){
+            System.out.println(waitingLine.getSize());
+        }
+
+        simThread.suspend();
+    }
+
+
+    public void resumeSim(){
+        for(Thread thread: threads){
+            thread.resume();
+        }
+        for(WaitingLine waitingLine: waitingLines){
+            System.out.println(waitingLine.getSize());
+        }
+        if(feedProducts)
+            simThread.resume();
     }
 
     public void feedProducts() throws InterruptedException {
@@ -69,7 +107,6 @@ public class Simulation implements Runnable{
         try {
             feedProducts();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
     }
 }
