@@ -29,8 +29,20 @@ public class simController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/sim/pause")
+    public ResponseEntity<?> pauseSim(){
+        simulation.pauseSim();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/sim/resume")
+    public ResponseEntity<?> resumeSim(){
+        simulation.resumeSim();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping("/sim/feed")
-    public ResponseEntity<?> changeFeed(@RequestParam("feed") boolean feedProducts){
+    public ResponseEntity<?> changeFeed(@RequestParam("feed") boolean feedProducts) throws InterruptedException {
         simulation.setFeedProducts(feedProducts);
         return new ResponseEntity<>(HttpStatus.OK);
     }

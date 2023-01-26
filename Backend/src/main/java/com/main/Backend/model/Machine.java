@@ -32,8 +32,6 @@ public class Machine implements Runnable{
             while (true) {
                 processProduct();
             }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (InterruptedException e) { }
     }
 }
