@@ -204,6 +204,10 @@ export class CanvasComponent implements OnInit {
   }
 
   replay() {
+    let shapes = this.stage.find("Circle");
+    for (let shape of shapes) {
+      shape.setAttr('fill', 'gray');
+    }
     this.simService.replay().subscribe();
   }
 }
