@@ -68,6 +68,11 @@ export class CanvasComponent implements OnInit {
 
   addQueue() {
     let q = this.queue.getQueue();
+    if (this.queueArray.length == 0) {
+      q.setAttr('fill', 'white');
+      q.setAttr('stroke', "black");
+      q.setAttr('strokeWidth', 3);
+    }
     this.queueArray.push(q.getAttr('id'));
     let group = new Konva.Group({
       draggable: true
@@ -90,17 +95,18 @@ export class CanvasComponent implements OnInit {
       const pos: any = this.stage.getPointerPosition();
       if (!this.isConnect && (event.target.className == "Circle")) {
         this.connection = new Konva.Line({
-          points: [event.target.getParent().getAttr('x') + 120, event.target.getParent().getAttr('y') + 100],
+          points: [event.target.getParent().getAttr('x') + 140, event.target.getParent().getAttr('y') + 100],
           stroke: 'black',
-          strokeWidth: 2,
+          strokeWidth: 5,
           lineJoin: 'round',
+          lineCap: 'round',
         });
         this.source = event.target
         this.isConnect = true;
       }
       else if (this.isConnect && (event.target.className == "Circle")){
         if (this.source.className !== event.target.className) {
-          let newPoints = [this.connection.getAttr('points')[0], this.connection.getAttr('points')[1], event.target.getParent().getAttr('x') + 80, event.target.getParent().getAttr('y') + 100];
+          let newPoints = [this.connection.getAttr('points')[0], this.connection.getAttr('points')[1], event.target.getParent().getAttr('x') + 60, event.target.getParent().getAttr('y') + 100];
           this.connection.setAttr('points', newPoints);
           this.machineArray[event.target.getAttr('id')] = this.machineArray[event.target.getAttr('id')].concat(" " + this.source.getAttr('id'));
         }
@@ -108,17 +114,18 @@ export class CanvasComponent implements OnInit {
       }
       else if (!this.isConnect && (event.target.className == "Rect")) {
         this.connection = new Konva.Line({
-          points: [event.target.getParent().getAttr('x') + 120 + event.target.getAttr('width') / 2, event.target.getParent().getAttr('y') + 100 + event.target.getAttr('height') / 2],
+          points: [event.target.getParent().getAttr('x') + 140 + event.target.getAttr('width') / 2, event.target.getParent().getAttr('y') + 100 + event.target.getAttr('height') / 2],
           stroke: 'black',
-          strokeWidth: 2,
+          strokeWidth: 5,
           lineJoin: 'round',
+          lineCap: "round",
         });
         this.source = event.target;
         this.isConnect = true;
       }
       else if (this.isConnect && (event.target.className == "Rect")){
         if (this.source.className != event.target.className) {
-          let newPoints = [this.connection.getAttr('points')[0], this.connection.getAttr('points')[1], event.target.getParent().getAttr('x') + 80 + event.target.getAttr('width') / 2, event.target.getParent().getAttr('y') + 100 + event.target.getAttr('height') / 2];
+          let newPoints = [this.connection.getAttr('points')[0], this.connection.getAttr('points')[1], event.target.getParent().getAttr('x') + 60 + event.target.getAttr('width') / 2, event.target.getParent().getAttr('y') + 100 + event.target.getAttr('height') / 2];
           this.connection.setAttr('points', newPoints);
           this.machineArray[this.source.getAttr('id')] = this.machineArray[this.source.getAttr('id')].concat(" " + event.target.getAttr('id'));
         }
@@ -172,21 +179,22 @@ export class CanvasComponent implements OnInit {
     this.socketService.getNewValue().subscribe(resp => {
       this.Data = resp;
       this.dataArr = this.Data.split(" ");
-      let shapes = this.stage.find('#' + this.dataArr[0]);
-      for (let machine of shapes) {
-        if (machine.className == "Circle") {
-          if (this.dataArr[5] != '-1') {
-            machine.setAttr('fill', "#" + Math.floor(this.dataArr[5] * 16777.215).toString(16));
-          }
-          else {
-            machine.setAttr('fill', 'gray');
+      if (this.dataArr[0] != '-1') {
+        let shapes = this.stage.find('#' + this.dataArr[0]);
+        for (let machine of shapes) {
+          if (machine.className == "Circle") {
+            if (this.dataArr[5] != '-1') {
+              machine.setAttr('fill', "#" + Math.floor(this.dataArr[5] * 16777.215).toString(16));
+            } else {
+              machine.setAttr('fill', 'gray');
+            }
           }
         }
+        let text2 = this.prodInQueue[this.dataArr[3]];
+        text2.setAttr('text', this.dataArr[4]);
       }
       let text1 = this.prodInQueue[this.dataArr[1]];
       text1.setAttr('text', this.dataArr[2]);
-      let text2 = this.prodInQueue[this.dataArr[3]];
-      text2.setAttr('text', this.dataArr[4]);
     });
   }
 
