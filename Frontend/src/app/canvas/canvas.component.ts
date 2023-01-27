@@ -208,6 +208,10 @@ export class CanvasComponent implements OnInit {
     for (let shape of shapes) {
       shape.setAttr('fill', 'gray');
     }
+    for (let prod of this.prodInQueue) {
+      prod.setAttr('text', '0');
+    }
+    console.log(this.prodInQueue);
     this.simService.replay().subscribe();
   }
 }
