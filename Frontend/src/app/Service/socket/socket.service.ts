@@ -1,13 +1,7 @@
 import { AppComponent } from './../../app.component';
 import { Injectable } from '@angular/core';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { environment} from "../../../environments/environment";
-import { catchError, tap, switchAll } from 'rxjs/operators';
-import { EMPTY, Subject } from 'rxjs';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
-
-export const WS_ENDPOINT = environment;
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +14,9 @@ export class SocketService {
     const connected: boolean = this.stompClient.coonected;
     if(connected){
       this.subscribeToTopic(topic, callback);
+      return;
     }
-    
+
     this.stompClient.connect({}, (): any =>{
       this.subscribeToTopic(topic, callback)
     });
