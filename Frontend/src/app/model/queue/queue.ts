@@ -15,7 +15,7 @@ export class Queue {
     this.w = 120;
     this.h = 50;
     this.fill = 'gray';
-    this.draggable = true;
+    this.draggable = false;
   }
 
   getQueue(){

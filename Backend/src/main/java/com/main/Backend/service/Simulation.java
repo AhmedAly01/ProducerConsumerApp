@@ -33,8 +33,8 @@ public class Simulation implements Runnable{
 
         for(String machineId : machineIds){
             String[] machineVals = machineId.split(" ");
-            int min = 500;
-            int max = 3000;
+            int min = 2000;
+            int max = 5000;
             threads.add(new Thread(new Machine(machineVals[0],
                     waitingLines.get(Integer.parseInt(machineVals[1])),
                     waitingLines.get(Integer.parseInt(machineVals[2])), (long) Math.floor(Math.random() *(max - min + 1) + min)), "Machine " + machineVals[0]));
