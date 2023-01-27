@@ -1,5 +1,8 @@
 package com.main.Backend.model;
 
+import com.main.Backend.service.WebSocketService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 public class Machine implements Runnable{
     private String id;
     private WaitingLine source;
@@ -17,8 +20,12 @@ public class Machine implements Runnable{
 
     private void processProduct() throws InterruptedException {
         Integer currProd;
-
         currProd = source.getProduct();
+
+        System.out.println(this.id + " " + source.getId() + " " +
+                source.getSize() + " " + target.getId() + " " + target.getSize() + " " + currProd);
+        WebSocketService.notifyFrontend(this.id + " " + source.getId() + " " +
+                source.getSize() + " " + target.getId() + " " + target.getSize() + " " + currProd);
 
         Thread.sleep(processingTime);
         System.out.println(id + " processed " + currProd);
