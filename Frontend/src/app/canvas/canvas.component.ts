@@ -27,8 +27,10 @@ export class CanvasComponent implements OnInit {
   source: any;
   sim: string = "Start Simulation";
   input: string = "Start Input";
+  pauseResume: string = "pause";
   isSimOn: boolean = false;
   isInputOn: boolean = false;
+  isPaused: boolean = false;
   Data: any;
   dataArr: Array<any> = [];
 
@@ -132,6 +134,7 @@ export class CanvasComponent implements OnInit {
       this.isSimOn = true;
       this.input = "Stop Input";
       this.isInputOn = true;
+      document.getElementById("pause-btn")!.style.display = "inline-block";
       this.simService.startSim(this.queueArray, this.machineArray, true).subscribe();
       this.socketAPI._connect();
       this.onNewValueReceive();
@@ -139,6 +142,7 @@ export class CanvasComponent implements OnInit {
     else {
       this.sim = "Start Simulation";
       this.isSimOn = false;
+      document.getElementById("pause-btn")!.style.display = "none";
       this.simService.stopSim().subscribe();
     }
   }
@@ -153,7 +157,6 @@ export class CanvasComponent implements OnInit {
       this.input = "Start Input";
       this.isInputOn = false;
       this.simService.changeFeed(false).subscribe();
-
     }
   }
 
@@ -174,4 +177,16 @@ export class CanvasComponent implements OnInit {
     });
   }
 
+  pauseResumeSim() {
+    if (!this.isPaused){
+      this.pauseResume = "resume";
+      this.isPaused = true;
+      this.simService.pauseSim().subscribe();
+    }
+    else {
+      this.pauseResume = "pause";
+      this.isPaused = false;
+      this.simService.resumeSim().subscribe();
+    }
+  }
 }
