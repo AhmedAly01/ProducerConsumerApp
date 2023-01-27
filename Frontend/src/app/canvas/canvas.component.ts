@@ -4,6 +4,7 @@ import Stage = Konva.Stage;
 import Layer = Konva.Layer;
 import {Machine} from "../model/machine/machine";
 import {Queue} from "../model/queue/queue";
+import {SimService} from "../Service/sim/sim.service";
 
 @Component({
   selector: 'app-canvas',
@@ -26,7 +27,7 @@ export class CanvasComponent implements OnInit {
   isSimOn: boolean = false;
   isInputOn: boolean = false;
 
-  constructor() { }
+  constructor(private simService: SimService) { }
 
   ngOnInit(): void {
     this.stage = new Stage({
@@ -103,10 +104,14 @@ export class CanvasComponent implements OnInit {
     if (!this.isSimOn){
       this.sim = "Stop Simulation";
       this.isSimOn = true;
+      this.input = "Stop Input";
+      this.isInputOn = true;
+      this.simService.startSim(this.queueArray, this.machineArray, true).subscribe();
     }
     else {
       this.sim = "Start Simulation";
       this.isSimOn = false;
+      this.simService.stopSim().subscribe();
     }
   }
 
@@ -114,15 +119,18 @@ export class CanvasComponent implements OnInit {
     if (!this.isInputOn){
       this.input = "Stop Input";
       this.isInputOn = true;
+      this.simService.changeFeed(true).subscribe();
     }
     else {
       this.input = "Start Input";
       this.isInputOn = false;
+      this.simService.changeFeed(false).subscribe();
+
     }
   }
 
   play() {
-    
+
   }
 
 }
