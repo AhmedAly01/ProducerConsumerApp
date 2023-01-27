@@ -135,6 +135,10 @@ export class CanvasComponent implements OnInit {
       this.input = "Stop Input";
       this.isInputOn = true;
       document.getElementById("pause-btn")!.style.display = "inline-block";
+      document.getElementById("input-btn")!.style.display = "inline-block";
+      document.getElementById("replay-btn")!.style.display = "inline-block";
+      document.getElementById("machine-btn")!.style.display = "none";
+      document.getElementById("queue-btn")!.style.display = "none";
       this.simService.startSim(this.queueArray, this.machineArray, true).subscribe();
       this.socketAPI._connect();
       this.onNewValueReceive();
@@ -143,6 +147,10 @@ export class CanvasComponent implements OnInit {
       this.sim = "Start Simulation";
       this.isSimOn = false;
       document.getElementById("pause-btn")!.style.display = "none";
+      document.getElementById("input-btn")!.style.display = "none";
+      document.getElementById("replay-btn")!.style.display = "none";
+      document.getElementById("machine-btn")!.style.display = "inline-block";
+      document.getElementById("queue-btn")!.style.display = "inline-block";
       this.simService.stopSim().subscribe();
     }
   }
