@@ -6,6 +6,7 @@ import com.main.Backend.model.Machine;
 import com.main.Backend.model.Product;
 import com.main.Backend.model.WaitingLine;
 
+import javax.crypto.Mac;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -35,9 +36,11 @@ public class Simulation implements Runnable{
             String[] machineVals = machineId.split(" ");
             int min = 2000;
             int max = 5000;
-            threads.add(new Thread(new Machine(machineVals[0],
+            Machine machine = new Machine(machineVals[0],
                     waitingLines.get(Integer.parseInt(machineVals[1])),
-                    waitingLines.get(Integer.parseInt(machineVals[2])), (long) Math.floor(Math.random() *(max - min + 1) + min)), "Machine " + machineVals[0]));
+                    waitingLines.get(Integer.parseInt(machineVals[2])), (long) Math.floor(Math.random() *(max - min + 1) + min));
+            machines.add(machine);
+            threads.add(new Thread(machine, "Machine " + machineVals[0]));
         }
     }
 
@@ -120,6 +123,7 @@ public class Simulation implements Runnable{
                 Thread.sleep(delayTime);
             }
         }else{
+            System.out.println(products.size());
             for(Product product: products){
                 waitingLine.addProduct(product.getProdNumber());
                 Thread.sleep(product.getDelayTime());
@@ -128,7 +132,7 @@ public class Simulation implements Runnable{
     }
 
     public void replay(){
-        simThread.suspend();
+        simThread.interrupt();
 
         for(Thread thread: threads){
             thread.interrupt();
@@ -139,11 +143,14 @@ public class Simulation implements Runnable{
             waitingLine.clearData();
         }
 
+        System.out.println(machines);
+
         for(Machine machine: machines){
             machine.clearMachine();
             Thread thread = new Thread(machine, "Machine " + machine.getId());
             threads.add(thread);
             thread.start();
+            System.out.println(thread.getState());
         }
 
         products.clear();
@@ -152,7 +159,8 @@ public class Simulation implements Runnable{
             products.add(memento.getState());
         }
         replaying = true;
-        simThread.resume();
+        simThread = new Thread(this, "sim thread");
+        simThread.start();
     }
 
 
