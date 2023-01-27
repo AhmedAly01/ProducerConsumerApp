@@ -1,4 +1,4 @@
-import { SocketService } from './../Service/socket/socket.service';
+import { SocketService } from '../Service/socket/socket.service';
 import { Component, OnInit } from '@angular/core';
 import Konva from "konva";
 import Stage = Konva.Stage;
@@ -6,6 +6,7 @@ import Layer = Konva.Layer;
 import {Machine} from "../model/machine/machine";
 import {Queue} from "../model/queue/queue";
 import {SimService} from "../Service/sim/sim.service";
+import {WebSocketAPI} from "../Service/socket/websocketapi";
 
 @Component({
   selector: 'app-canvas',
@@ -28,8 +29,10 @@ export class CanvasComponent implements OnInit {
   input: string = "Start Input";
   isSimOn: boolean = false;
   isInputOn: boolean = false;
+  Data: any;
+  dataArr: Array<any> = [];
 
-  constructor(private simService: SimService, private socketService: SocketService) { }
+  constructor(private simService: SimService, private socketService: SocketService, private socketAPI: WebSocketAPI) { }
 
   ngOnInit(): void {
     this.stage = new Stage({
@@ -40,8 +43,6 @@ export class CanvasComponent implements OnInit {
     this.layer = new Layer();
     this.stage.add(this.layer);
     this.mouseListeners();
-
-
   }
 
 
@@ -132,6 +133,8 @@ export class CanvasComponent implements OnInit {
       this.input = "Stop Input";
       this.isInputOn = true;
       this.simService.startSim(this.queueArray, this.machineArray, true).subscribe();
+      this.socketAPI._connect();
+      this.onNewValueReceive();
     }
     else {
       this.sim = "Start Simulation";
@@ -154,8 +157,21 @@ export class CanvasComponent implements OnInit {
     }
   }
 
-  play() {
-
+  onNewValueReceive() {
+    this.socketService.getNewValue().subscribe(resp => {
+      this.Data = resp;
+      this.dataArr = this.Data.split(" ");
+      let shapes = this.stage.find('#' + this.dataArr[0]);
+      for (let machine of shapes) {
+        if (machine.className == "Circle") {
+          machine.setAttr('fill', "#" + Math.floor(this.dataArr[5] * 16777.215).toString(16));
+        }
+      }
+      let text1 = this.prodInQueue[this.dataArr[1]];
+      text1.setAttr('text', this.dataArr[2]);
+      let text2 = this.prodInQueue[this.dataArr[3]];
+      text2.setAttr('text', this.dataArr[4]);
+    });
   }
 
 }
