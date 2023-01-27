@@ -4,6 +4,7 @@ import Stage = Konva.Stage;
 import Layer = Konva.Layer;
 import {Machine} from "../model/machine/machine";
 import {Queue} from "../model/queue/queue";
+import {SimService} from "../Service/sim/sim.service";
 
 @Component({
   selector: 'app-canvas',
@@ -15,10 +16,18 @@ export class CanvasComponent implements OnInit {
   layer!: Layer;
   machine = new Machine();
   queue = new Queue();
-  queueArray: Array<number> = [];
-  machineArray: Array<Array<number>> = [];
+  connection: Konva.Shape = new Konva.Shape();
+  queueArray: Array<string> = [];
+  machineArray: Array<string> = [];
+  products: Array<number> = [];
+  isConnect: boolean = false;
+  source: any;
+  sim: string = "Start Simulation";
+  input: string = "Start Input";
+  isSimOn: boolean = false;
+  isInputOn: boolean = false;
 
-  constructor() { }
+  constructor(private simService: SimService) { }
 
   ngOnInit(): void {
     this.stage = new Stage({
@@ -28,20 +37,100 @@ export class CanvasComponent implements OnInit {
     });
     this.layer = new Layer();
     this.stage.add(this.layer);
+    this.mouseListeners();
   }
 
 
   addMachine() {
     let m = this.machine.getMachine();
-    console.log(m);
+    this.machineArray.push(m.getAttr('id'));
     this.layer.add(m);
     this.stage.draw();
   }
 
   addQueue() {
     let q = this.queue.getQueue();
-    console.log(q);
+    this.queueArray.push(q.getAttr('id'));
     this.layer.add(q);
     this.stage.draw();
   }
+
+  mouseListeners() {
+    this.stage.on("click", (event) =>{
+      console.log(event.target);
+      const pos: any = this.stage.getPointerPosition();
+      if (!this.isConnect && (event.target.className == "Circle")) {
+        this.connection = new Konva.Line({
+          points: [event.target.getAttr('x'), event.target.getAttr('y')],
+          stroke: 'black',
+          strokeWidth: 2,
+          lineJoin: 'round',
+        });
+        this.source = event.target
+        this.isConnect = true;
+      }
+      else if (this.isConnect && (event.target.className == "Circle")){
+        let newPoints = [this.connection.getAttr('points')[0], this.connection.getAttr('points')[1], event.target.getAttr('x'), event.target.getAttr('y')];
+        this.connection.setAttr('points', newPoints);
+        if (this.source.className != event.target.className) {
+          this.machineArray[event.target.getAttr('id')] = this.machineArray[event.target.getAttr('id')].concat(" " + this.source.getAttr('id'));
+        }
+        this.isConnect = false;
+      }
+      else if (!this.isConnect && (event.target.className == "Rect")) {
+        this.connection = new Konva.Line({
+          points: [event.target.getAttr('x') + event.target.getAttr('width') / 2, event.target.getAttr('y') + event.target.getAttr('height') / 2],
+          stroke: 'black',
+          strokeWidth: 2,
+          lineJoin: 'round',
+        });
+        this.source = event.target;
+        this.isConnect = true;
+      }
+      else if (this.isConnect && (event.target.className == "Rect")){
+        let newPoints = [this.connection.getAttr('points')[0], this.connection.getAttr('points')[1], event.target.getAttr('x') + event.target.getAttr('width') / 2, event.target.getAttr('y') + event.target.getAttr('height') / 2];
+        this.connection.setAttr('points', newPoints);
+        if (this.source.className != event.target.className) {
+          this.machineArray[this.source.getAttr('id')] = this.machineArray[this.source.getAttr('id')].concat(" " + event.target.getAttr('id'));
+        }
+        this.isConnect = false;
+      }
+      this.layer.add(this.connection);
+      console.log(this.machineArray);
+    });
+  }
+
+  controlSim() {
+    if (!this.isSimOn){
+      this.sim = "Stop Simulation";
+      this.isSimOn = true;
+      this.input = "Stop Input";
+      this.isInputOn = true;
+      this.simService.startSim(this.queueArray, this.machineArray, true).subscribe();
+    }
+    else {
+      this.sim = "Start Simulation";
+      this.isSimOn = false;
+      this.simService.stopSim().subscribe();
+    }
+  }
+
+  controlInput() {
+    if (!this.isInputOn){
+      this.input = "Stop Input";
+      this.isInputOn = true;
+      this.simService.changeFeed(true).subscribe();
+    }
+    else {
+      this.input = "Start Input";
+      this.isInputOn = false;
+      this.simService.changeFeed(false).subscribe();
+
+    }
+  }
+
+  play() {
+
+  }
+
 }
