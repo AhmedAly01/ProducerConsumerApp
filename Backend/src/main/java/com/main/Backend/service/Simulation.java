@@ -121,7 +121,7 @@ public class Simulation implements Runnable{
                 CareTaker.add(memento);
                 waitingLine.addProduct(prodNum);
                 WebSocketService.notifyFrontend("-1" + " " + waitingLine.getId() + " " + waitingLine.getSize()
-                        + " " + "-1" + " " + "-1" + "-1");
+                        + " " + "-1" + " " + "-1" + " " + "-1");
                 Thread.sleep(delayTime);
             }
         }else{
