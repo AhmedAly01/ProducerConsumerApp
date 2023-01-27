@@ -33,6 +33,14 @@ public class Machine implements Runnable{
         target.addProduct(currProd);
     }
 
+    public void clearMachine(){
+        this.currProduct = null;
+    }
+
+    public String getId(){
+        return id;
+    }
+
     @Override
     public void run(){
         try {

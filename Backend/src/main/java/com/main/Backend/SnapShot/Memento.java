@@ -1,11 +1,13 @@
 package com.main.Backend.SnapShot;
 
+import com.main.Backend.model.Product;
+
 public class Memento {
-    Object state;
-    public Memento(Object state){
+    Product state;
+    public Memento(Product state){
         this.state = state;
     }
-    public Object getState(){
+    public Product getState(){
         return state;
     }
 }
