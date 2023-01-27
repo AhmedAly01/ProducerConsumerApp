@@ -1,13 +1,15 @@
 package com.main.Backend.SnapShot;
 
-public class Originator {
-    private Object state;
+import com.main.Backend.model.Product;
 
-    public void setState(Object state){
+public class Originator {
+    private Product state;
+
+    public void setState(Product state){
         this.state=state;
     }
 
-    public Object getState(){
+    public Product getState(){
         return state;
     }
 

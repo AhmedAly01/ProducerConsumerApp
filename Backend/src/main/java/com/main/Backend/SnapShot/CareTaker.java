@@ -5,14 +5,17 @@ import java.util.List;
 
 public class CareTaker {
 
-    private List<Memento> mementos =new ArrayList<Memento>();
+    private static ArrayList<Memento> mementos =new ArrayList<Memento>();
 
-    public void add(Memento state){
+    public static void add(Memento state){
         mementos.add(state);
     }
-    public Memento get(int index){
-        return mementos.get(index);
+    public static ArrayList<Memento> get(){
+        return mementos;
     }
 
+    public static void clearSnaps(){
+        mementos.clear();
+    }
 
 }

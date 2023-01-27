@@ -44,4 +44,9 @@ public class WaitingLine {
     public Integer getSize(){
         return products.size();
     }
+
+
+    public void clearData(){
+        this.products.clear();
+    }
 }
