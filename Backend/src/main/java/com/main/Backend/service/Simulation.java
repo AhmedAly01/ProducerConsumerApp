@@ -14,7 +14,7 @@ public class Simulation implements Runnable{
     private ArrayList<Machine> machines = new ArrayList<Machine>();
     private ArrayList<Thread> threads = new ArrayList<Thread>();
     private boolean feedProducts = false;
-    private Thread simThread = new Thread(this, "sim thread");
+    private Thread simThread;
     private ArrayList<Product> products = new ArrayList<Product>();
 
     private boolean replaying = false;
@@ -24,6 +24,8 @@ public class Simulation implements Runnable{
         machines.clear();
         threads.clear();
         products.clear();
+        CareTaker.clearSnaps();
+
         this.feedProducts = feedProducts;
         for (String queueId : queueIds) {
             waitingLines.add(new WaitingLine(queueId));
@@ -55,10 +57,8 @@ public class Simulation implements Runnable{
         for(Thread thread: threads){
             thread.start();
         }
-        if(simThread.getState().equals(Thread.State.NEW))
-            simThread.start();
-        else
-            simThread.resume();
+        simThread = new Thread(this, "sim thread");
+        simThread.start();
     }
 
 
@@ -76,7 +76,7 @@ public class Simulation implements Runnable{
         machines.clear();
         waitingLines.clear();
 
-        simThread.suspend();
+        simThread.interrupt();
     }
 
 

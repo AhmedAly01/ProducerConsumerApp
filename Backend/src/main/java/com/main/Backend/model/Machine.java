@@ -28,7 +28,9 @@ public class Machine implements Runnable{
                 source.getSize() + " " + target.getId() + " " + target.getSize() + " " + currProd);
 
         Thread.sleep(processingTime);
-        System.out.println(id + " processed " + currProd);
+
+        WebSocketService.notifyFrontend(this.id + " " + source.getId() + " " +
+                source.getSize() + " " + target.getId() + " " + target.getSize() + " " + "-1");
 
         target.addProduct(currProd);
     }
