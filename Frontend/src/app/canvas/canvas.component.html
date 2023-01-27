@@ -1,9 +1,9 @@
 <div id="container"></div>
 <div style="display: flex">
-  <button (click)="addMachine()" class="btn">Add Machine</button>
-  <button (click)="addQueue()" class="btn">Add Queue</button>
+  <button (click)="addMachine()" class="btn" class="btn" id="machine-btn" style="display: inline-block">Add Machine</button>
+  <button (click)="addQueue()" class="btn" id="queue-btn" style="display: inline-block">Add Queue</button>
   <button (click)="controlSim()" class="btn">{{sim}}</button>
-  <button (click)="controlInput()" class="btn">{{input}}</button>
-  <button (click)="replay()" class="btn">Replay</button>
+  <button (click)="controlInput()" class="btn" id="input-btn" style="display: none">{{input}}</button>
+  <button (click)="replay()" class="btn" id="replay-btn" style="display: none">Replay</button>
   <button (click)="pauseResumeSim()" class="btn" id="pause-btn" style="display: none">{{pauseResume}}</button>
 </div>
