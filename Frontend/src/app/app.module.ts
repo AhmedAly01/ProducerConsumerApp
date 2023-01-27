@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { CanvasComponent } from './canvas/canvas.component';
 import { HttpClientModule } from "@angular/common/http";
+import { SocketService } from './Service/socket/socket.service';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,7 @@ import { HttpClientModule } from "@angular/common/http";
     BrowserModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [SocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
