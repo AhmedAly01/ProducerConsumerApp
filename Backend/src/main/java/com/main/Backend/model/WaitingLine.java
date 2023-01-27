@@ -38,6 +38,9 @@ public class WaitingLine {
         }
     }
 
+    public String getId(){
+        return this.id;
+    }
     public Integer getSize(){
         return products.size();
     }

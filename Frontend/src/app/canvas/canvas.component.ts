@@ -1,3 +1,4 @@
+import { SocketService } from './../Service/socket/socket.service';
 import { Component, OnInit } from '@angular/core';
 import Konva from "konva";
 import Stage = Konva.Stage;
@@ -27,7 +28,7 @@ export class CanvasComponent implements OnInit {
   isSimOn: boolean = false;
   isInputOn: boolean = false;
 
-  constructor(private simService: SimService) { }
+  constructor(private simService: SimService, private socketService: SocketService) { }
 
   ngOnInit(): void {
     this.stage = new Stage({
@@ -38,6 +39,8 @@ export class CanvasComponent implements OnInit {
     this.layer = new Layer();
     this.stage.add(this.layer);
     this.mouseListeners();
+
+
   }
 
 

@@ -20,7 +20,10 @@
     "@angular/router": "^14.2.0",
     "angular-websocket": "^1.0.0",
     "konva": "^8.4.2",
+    "net": "^1.0.2",
     "rxjs": "~7.5.0",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },
