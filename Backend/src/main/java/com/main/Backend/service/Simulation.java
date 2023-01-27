@@ -8,10 +8,12 @@ import com.main.Backend.model.WaitingLine;
 
 import javax.crypto.Mac;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Simulation implements Runnable{
-    private ArrayList<WaitingLine> waitingLines = new ArrayList<WaitingLine>();
+    private Map<String, WaitingLine> waitingLines = new HashMap<String, WaitingLine>();
     private ArrayList<Machine> machines = new ArrayList<Machine>();
     private ArrayList<Thread> threads = new ArrayList<Thread>();
     private boolean feedProducts = false;
@@ -29,7 +31,7 @@ public class Simulation implements Runnable{
 
         this.feedProducts = feedProducts;
         for (String queueId : queueIds) {
-            waitingLines.add(new WaitingLine(queueId));
+            waitingLines.put(queueId, new WaitingLine(queueId));
         }
 
         for(String machineId : machineIds){
@@ -37,9 +39,10 @@ public class Simulation implements Runnable{
             int min = 2000;
             int max = 5000;
             Machine machine = new Machine(machineVals[0],
-                    waitingLines.get(Integer.parseInt(machineVals[1])),
-                    waitingLines.get(Integer.parseInt(machineVals[2])), (long) Math.floor(Math.random() *(max - min + 1) + min));
+                    waitingLines.get(machineVals[1]),
+                    waitingLines.get(machineVals[2]), (long) Math.floor(Math.random() *(max - min + 1) + min));
             machines.add(machine);
+            waitingLines.get(machineVals[1]).addObserver(machine);
             threads.add(new Thread(machine, "Machine " + machineVals[0]));
         }
     }
@@ -71,7 +74,7 @@ public class Simulation implements Runnable{
         for(Thread thread: threads){
             thread.interrupt();
         }
-        for(WaitingLine waitingLine: waitingLines){
+        for(WaitingLine waitingLine: waitingLines.values()){
             System.out.println(waitingLine.getSize());
         }
 
@@ -80,6 +83,7 @@ public class Simulation implements Runnable{
         waitingLines.clear();
 
         simThread.interrupt();
+        System.out.println(products.size());
     }
 
 
@@ -87,7 +91,7 @@ public class Simulation implements Runnable{
         for(Thread thread: threads){
             thread.suspend();
         }
-        for(WaitingLine waitingLine: waitingLines){
+        for(WaitingLine waitingLine: waitingLines.values()){
             System.out.println(waitingLine.getSize());
         }
 
@@ -99,7 +103,7 @@ public class Simulation implements Runnable{
         for(Thread thread: threads){
             thread.resume();
         }
-        for(WaitingLine waitingLine: waitingLines){
+        for(WaitingLine waitingLine: waitingLines.values()){
             System.out.println(waitingLine.getSize());
         }
         if(feedProducts)
@@ -107,7 +111,7 @@ public class Simulation implements Runnable{
     }
 
     public void feedProducts() throws InterruptedException {
-        WaitingLine waitingLine = waitingLines.get(0);
+        WaitingLine waitingLine = waitingLines.get("0");
         if(!replaying){
             Random rand = new Random();
             int min = 500;
@@ -141,7 +145,7 @@ public class Simulation implements Runnable{
         }
         threads.clear();
 
-        for(WaitingLine waitingLine: waitingLines){
+        for(WaitingLine waitingLine: waitingLines.values()){
             waitingLine.clearData();
         }
 

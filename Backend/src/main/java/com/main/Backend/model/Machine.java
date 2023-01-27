@@ -3,13 +3,18 @@ package com.main.Backend.model;
 import com.main.Backend.service.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class Machine implements Runnable{
+import java.util.Observable;
+import java.util.Observer;
+
+public class Machine implements Runnable, Observer {
     private String id;
     private WaitingLine source;
     private WaitingLine target;
 
     private Integer currProduct = null;
     private Long processingTime;
+
+    private Thread machineThread;
 
     public Machine(String id, WaitingLine source, WaitingLine target, Long processingTime){
         this.source = source;
@@ -20,10 +25,14 @@ public class Machine implements Runnable{
 
     private void processProduct() throws InterruptedException {
         Integer currProd;
+
         currProd = source.getProduct();
 
-        System.out.println(this.id + " " + source.getId() + " " +
-                source.getSize() + " " + target.getId() + " " + target.getSize() + " " + currProd);
+        if(currProd == null){
+            machineThread.suspend();
+            currProd = source.getProduct();
+        }
+
         WebSocketService.notifyFrontend(this.id + " " + source.getId() + " " +
                 source.getSize() + " " + target.getId() + " " + target.getSize() + " " + currProd);
 
@@ -46,9 +55,15 @@ public class Machine implements Runnable{
     @Override
     public void run(){
         try {
+            this.machineThread = Thread.currentThread();
             while (true) {
                 processProduct();
             }
         } catch (InterruptedException e) { }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        machineThread.resume();
     }
 }
