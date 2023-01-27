@@ -27,8 +27,10 @@ export class CanvasComponent implements OnInit {
   source: any;
   sim: string = "Start Simulation";
   input: string = "Start Input";
+  pauseResume: string = "Pause";
   isSimOn: boolean = false;
   isInputOn: boolean = false;
+  isPaused: boolean = false;
   Data: any;
   dataArr: Array<any> = [];
 
@@ -88,7 +90,7 @@ export class CanvasComponent implements OnInit {
       const pos: any = this.stage.getPointerPosition();
       if (!this.isConnect && (event.target.className == "Circle")) {
         this.connection = new Konva.Line({
-          points: [event.target.getParent().getAttr('x') + 100, event.target.getParent().getAttr('y') + 100],
+          points: [event.target.getParent().getAttr('x') + 120, event.target.getParent().getAttr('y') + 100],
           stroke: 'black',
           strokeWidth: 2,
           lineJoin: 'round',
@@ -98,7 +100,7 @@ export class CanvasComponent implements OnInit {
       }
       else if (this.isConnect && (event.target.className == "Circle")){
         if (this.source.className !== event.target.className) {
-          let newPoints = [this.connection.getAttr('points')[0], this.connection.getAttr('points')[1], event.target.getParent().getAttr('x') + 100, event.target.getParent().getAttr('y') + 100];
+          let newPoints = [this.connection.getAttr('points')[0], this.connection.getAttr('points')[1], event.target.getParent().getAttr('x') + 80, event.target.getParent().getAttr('y') + 100];
           this.connection.setAttr('points', newPoints);
           this.machineArray[event.target.getAttr('id')] = this.machineArray[event.target.getAttr('id')].concat(" " + this.source.getAttr('id'));
         }
@@ -106,7 +108,7 @@ export class CanvasComponent implements OnInit {
       }
       else if (!this.isConnect && (event.target.className == "Rect")) {
         this.connection = new Konva.Line({
-          points: [event.target.getParent().getAttr('x') + 100 + event.target.getAttr('width') / 2, event.target.getParent().getAttr('y') + 100 + event.target.getAttr('height') / 2],
+          points: [event.target.getParent().getAttr('x') + 120 + event.target.getAttr('width') / 2, event.target.getParent().getAttr('y') + 100 + event.target.getAttr('height') / 2],
           stroke: 'black',
           strokeWidth: 2,
           lineJoin: 'round',
@@ -116,7 +118,7 @@ export class CanvasComponent implements OnInit {
       }
       else if (this.isConnect && (event.target.className == "Rect")){
         if (this.source.className != event.target.className) {
-          let newPoints = [this.connection.getAttr('points')[0], this.connection.getAttr('points')[1], event.target.getParent().getAttr('x') + 100 + event.target.getAttr('width') / 2, event.target.getParent().getAttr('y') + 100 + event.target.getAttr('height') / 2];
+          let newPoints = [this.connection.getAttr('points')[0], this.connection.getAttr('points')[1], event.target.getParent().getAttr('x') + 80 + event.target.getAttr('width') / 2, event.target.getParent().getAttr('y') + 100 + event.target.getAttr('height') / 2];
           this.connection.setAttr('points', newPoints);
           this.machineArray[this.source.getAttr('id')] = this.machineArray[this.source.getAttr('id')].concat(" " + event.target.getAttr('id'));
         }
@@ -132,6 +134,7 @@ export class CanvasComponent implements OnInit {
       this.isSimOn = true;
       this.input = "Stop Input";
       this.isInputOn = true;
+      document.getElementById("pause-btn")!.style.display = "inline-block";
       this.simService.startSim(this.queueArray, this.machineArray, true).subscribe();
       this.socketAPI._connect();
       this.onNewValueReceive();
@@ -139,6 +142,7 @@ export class CanvasComponent implements OnInit {
     else {
       this.sim = "Start Simulation";
       this.isSimOn = false;
+      document.getElementById("pause-btn")!.style.display = "none";
       this.simService.stopSim().subscribe();
     }
   }
@@ -153,7 +157,6 @@ export class CanvasComponent implements OnInit {
       this.input = "Start Input";
       this.isInputOn = false;
       this.simService.changeFeed(false).subscribe();
-
     }
   }
 
@@ -164,7 +167,12 @@ export class CanvasComponent implements OnInit {
       let shapes = this.stage.find('#' + this.dataArr[0]);
       for (let machine of shapes) {
         if (machine.className == "Circle") {
-          machine.setAttr('fill', "#" + Math.floor(this.dataArr[5] * 16777.215).toString(16));
+          if (this.dataArr[5] != '-1') {
+            machine.setAttr('fill', "#" + Math.floor(this.dataArr[5] * 16777.215).toString(16));
+          }
+          else {
+            machine.setAttr('fill', 'gray');
+          }
         }
       }
       let text1 = this.prodInQueue[this.dataArr[1]];
@@ -174,4 +182,20 @@ export class CanvasComponent implements OnInit {
     });
   }
 
+  pauseResumeSim() {
+    if (!this.isPaused){
+      this.pauseResume = "Resume";
+      this.isPaused = true;
+      this.simService.pauseSim().subscribe();
+    }
+    else {
+      this.pauseResume = "Pause";
+      this.isPaused = false;
+      this.simService.resumeSim().subscribe();
+    }
+  }
+
+  replay() {
+    this.simService.replay().subscribe();
+  }
 }
