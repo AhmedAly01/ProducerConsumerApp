@@ -34,6 +34,10 @@ export class SimService {
     return this.http.post<any>("http://localhost:8080/sim/resume", '');
   }
 
+  replay(){
+    return this.http.post<any>("http://localhost:8080/sim/replay", '');
+  }
+
   changeFeed(feedProducts: boolean) {
     let params = new FormData();
     params.append("feed", String(feedProducts));
