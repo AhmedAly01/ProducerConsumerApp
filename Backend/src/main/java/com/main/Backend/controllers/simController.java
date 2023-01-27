@@ -46,4 +46,10 @@ public class simController {
         simulation.setFeedProducts(feedProducts);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/sim/replay")
+    public ResponseEntity<?> replay(){
+        simulation.replay();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

@@ -14,5 +14,8 @@ public class CareTaker {
         return mementos;
     }
 
+    public static void clearSnaps(){
+        mementos.clear();
+    }
 
 }
