@@ -13,7 +13,7 @@ export class Machine {
     this.y = 100;
     this.radius = 50;
     this.fill = 'gray';
-    this.draggable = true;
+    this.draggable = false;
   }
 
   getMachine(){

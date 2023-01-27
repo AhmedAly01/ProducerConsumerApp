@@ -1,35 +1,21 @@
-import { AppComponent } from './../../app.component';
-import { Injectable } from '@angular/core';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { environment} from "../../../environments/environment";
-import { catchError, tap, switchAll } from 'rxjs/operators';
-import { EMPTY, Subject } from 'rxjs';
-import * as SockJS from 'sockjs-client';
-import * as Stomp from 'stompjs';
-
-export const WS_ENDPOINT = environment;
+import {Injectable, OnDestroy} from '@angular/core';
+import {BehaviorSubject, Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
-export class SocketService {
-  socket = new SockJS('http://localhost:8080/spa-websocket');
-  stompClient = Stomp.over(this.socket);
-
-  subscribe(topic: string, callback: any): void{
-    const connected: boolean = this.stompClient.coonected;
-    if(connected){
-      this.subscribeToTopic(topic, callback);
-    }
-    
-    this.stompClient.connect({}, (): any =>{
-      this.subscribeToTopic(topic, callback)
-    });
+export class SocketService implements OnDestroy{
+  private blogDataSubject = new BehaviorSubject<string>('');
+  constructor() { }
+  ngOnDestroy(): void {
+    this.blogDataSubject .unsubscribe();
   }
 
-  private subscribeToTopic(topic: string, callback: any): any{
-    this.stompClient.subscribe(topic, (): any => {
-      callback();
-    });
+  onNewValueReceive(msg: string) {
+    this.blogDataSubject .next(msg);
   }
+  getNewValue(): Observable<string> {
+    return this.blogDataSubject .asObservable();
+  }
+
 }

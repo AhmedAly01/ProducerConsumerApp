@@ -14,6 +14,9 @@ public class Simulation implements Runnable{
     private Thread simThread = new Thread(this, "sim thread");
 
     public void buildGraph(String[] queueIds, String[] machineIds, boolean feedProducts){
+        waitingLines.clear();
+        machines.clear();
+        threads.clear();
         this.feedProducts = feedProducts;
         for (String queueId : queueIds) {
             waitingLines.add(new WaitingLine(queueId));
@@ -21,8 +24,8 @@ public class Simulation implements Runnable{
 
         for(String machineId : machineIds){
             String[] machineVals = machineId.split(" ");
-            int min = 500;
-            int max = 3000;
+            int min = 2000;
+            int max = 5000;
             threads.add(new Thread(new Machine(machineVals[0],
                     waitingLines.get(Integer.parseInt(machineVals[1])),
                     waitingLines.get(Integer.parseInt(machineVals[2])), (long) Math.floor(Math.random() *(max - min + 1) + min)), "Machine " + machineVals[0]));
