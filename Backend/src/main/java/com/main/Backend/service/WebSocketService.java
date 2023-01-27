@@ -15,6 +15,6 @@ public class WebSocketService {
     }
 
     public static void notifyFrontend(final String message){
-        messagingTemplate.convertAndSend("/topic/", message);
+        messagingTemplate.convertAndSend("/topic/message", message);
     }
 }
